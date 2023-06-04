@@ -40,6 +40,11 @@
         name: libvirtd
         state: started
         enabled: true
+    - name: Virtualization socket services are enabled
+      ansible.builtin.service:
+        name: virtproxyd.socket
+        state: started
+        enabled: true
 
     - name: Ensuring libvirt module is present
       ansible.builtin.pip:
@@ -54,5 +59,6 @@
           domain: "{{ cluster.name }}.{{ domain }}"
           network_cidr: ' ["{{ network_cidr }}"]'
           cluster_name: "{{ cluster.name }}"
+          libvirt_pool_path: "{{ libvirt_pool_path }}"
         force_init: true
         state: present

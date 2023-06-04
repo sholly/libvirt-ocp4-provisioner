@@ -1,6 +1,7 @@
-three_node: true
-domain: hetzner.lab
-network_cidr: 192.168.100.0/24
+three_node: false
+domain: lab.unixnerd.org
+network_cidr: 192.168.1.0/24
+libvirt_pool_path: /raid/kvm
 cluster:
   name: ocp4
   version: stable
@@ -9,20 +10,19 @@ cluster:
   pullSecret: ''
   additional_block_device:
     enabled: false
-    size: 100
+    size: 1
 cluster_nodes:
   host_list:
-    sno:
-      ip: 192.168.100.7
     bootstrap:
-      - ip: 192.168.100.6
+      - ip: 192.168.1.6
     masters:
-      - ip: 192.168.100.7
-      - ip: 192.168.100.8
-      - ip: 192.168.100.9
+      - ip: 192.168.1.7
+      - ip: 192.168.1.8
+      - ip: 192.168.1.9
     workers:
-      - ip: 192.168.100.10
-      - ip: 192.168.100.11
+      - ip: 192.168.1.10
+      - ip: 192.168.1.11
+      - ip: 192.168.1.12
   specs:
     bootstrap:
       vcpu: 4
@@ -33,6 +33,6 @@ cluster_nodes:
       mem: 16
       disk: 60
     workers:
-      vcpu: 2
-      mem: 16
+      vcpu: 8
+      mem: 32
       disk: 60

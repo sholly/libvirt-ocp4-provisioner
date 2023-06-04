@@ -25,6 +25,10 @@ resource "libvirt_domain" "bootstrap" {
   memory = var.memory*1024
   vcpu = var.cpu
 
+  cpu {
+    mode = "host-passthrough"
+  }
+
   disk {
        volume_id = libvirt_volume.os_image.id
   }
@@ -43,7 +47,7 @@ resource "libvirt_domain" "bootstrap" {
   }
 
   graphics {
-    type = "spice"
+    type = "vnc"
     listen_type = "address"
     autoport = "true"
   }

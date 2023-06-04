@@ -54,7 +54,7 @@
         line: '  mastersSchedulable: False'
       when:
         - not three_node
-        - hostvars['bastion'].version.1 | int > 1
+          #- hostvars['bastion'].version.1 | int > 1
 
     - name: Backup install directory
       ansible.builtin.copy:

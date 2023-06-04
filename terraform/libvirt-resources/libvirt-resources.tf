@@ -12,6 +12,9 @@ variable "libvirt_pool_path" { default = "/var/lib/libvirt/images" }
 provider "libvirt" {
   uri = "qemu:///system"
 }
+#provider "libvirt" {
+#  uri = "qemu+ssh://sholly@localhost/system?keyfile=/root/.ssh/zuul-local&sshauth=privkey&no_verify=1"
+#}
 
 # A pool for all cluster volumes
 resource "libvirt_pool" "cluster" {
