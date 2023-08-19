@@ -7,6 +7,8 @@ variable "vm_volume_size" { default = 40 }
 variable "vm_net_ip" { default = "192.168.100.7" }
 variable "local_volume_size" { default = 50 }
 variable "local_volume_enabled" { default = false }
+variable "vm_additional_nic" { default = false }
+variable "vm_additional_nic_network" { default = "default" }
 variable "libvirt_network" { default = "ocp" }
 variable "libvirt_pool" { default = "default" }
 
@@ -60,6 +62,13 @@ resource "libvirt_domain" "master" {
     addresses = [ "${var.vm_net_ip}" ]
   }
 
+  dynamic "network_interface" {
+     for_each = tobool(lower(var.vm_additional_nic)) ? { nic = true } : {}
+     content {
+       network_name = var.vm_additional_nic_network
+     }
+  }
+
   boot_device {
     dev = [ "hd", "cdrom" ]
   }
@@ -71,7 +80,7 @@ resource "libvirt_domain" "master" {
   }
 
   graphics {
-    type = "spice"
+    type = "vnc"
     listen_type = "address"
     autoport = "true"
   }

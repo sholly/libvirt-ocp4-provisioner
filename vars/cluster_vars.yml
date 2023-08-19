@@ -7,8 +7,10 @@ cluster:
   version: 4.12.22
   ocp_user: admin
   ocp_pass: openshift
-  pullSecret: ''
-
+  pullSecret: ""
+  additional_nic:
+    enabled: false
+    network:
   additional_block_device:
     enabled: true
     size: 100
@@ -24,7 +26,6 @@ cluster_nodes:
       - ip: 192.168.1.10
         role: infra
       - ip: 192.168.1.11
-        role: infra
       - ip: 192.168.1.12
   specs:
     bootstrap:
