@@ -7,6 +7,22 @@ This project has been inspired by [@ValentinoUberti](https://github.com/Valentin
 
 I wanted to play around with terraform and port his great work to libvirt and so, here we are! I adapted his playbooks to libvirt needs, making massive use of in-memory inventory creation for provisioned VMs, to minimize the impact on customizable stuff in variables.
 
+- [Project Overview](#project-overview)
+- [Quickstart](#quickstart)
+  - [HA Clusters](#ha-clusters)
+  - [Single Node Openshift (SNO)](#single-node-openshift--sno-)
+- [Quickstart with Execution Environment](#quickstart-with-execution-environment)
+  - [Build EE image](#build-ee-image)
+  - [Run playbooks](#run-playbooks)
+- [Common vars](#common-vars)
+  - [HA Configuration vars](#ha-configuration-vars)
+  - [Single Node Openshift vars](#single-node-openshift-vars)
+- [Cleanup](#cleanup)
+  - [Full deployment cleanup](#full-deployment-cleanup)
+  - [SNO deployment cleanup](#sno-deployment-cleanup)
+
+## Project Overview
+
 To give a quick overview, this project will allow you to provision a **fully working** and **stable** OCP environment, consisting of:
 
 - Bastion machine provisioned with:
@@ -33,7 +49,7 @@ The version can be selected freely, by specifying the desired one (i.e. 4.10.x, 
 
 Now support for **Single Node Openshift - SNO** has been added!
 
-## **bastion** and **loadbalancer** VMs spec:
+**bastion** and **loadbalancer** VMs spec:
 
 - OS: Centos8 Generic Cloud base image [https://cloud.centos.org/centos/8-stream/x86_64/images/](https://cloud.centos.org/centos/8-stream/x86_64/images/)
 - cloud-init:
@@ -47,17 +63,23 @@ The user is capable of logging via SSH too.
 
 First of all, you need to install required collections to get started:
 
-    ansible-galaxy collection install -r requirements.yml
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
 
 The playbook is meant to run against local host/s, defined under **vm_host** group in your inventory, depending on how many clusters you want to configure at once.
 
 ### HA Clusters
 
-    ansible-playbook main.yml
+```bash
+ansible-playbook main.yml
+```
 
 ### Single Node Openshift (SNO)
 
-    ansible-playbook main-sno.yml
+```bash
+ansible-playbook main-sno.yml
+```
 
 You can quickly make it work by configuring the needed vars, but you can go straight with the defaults!
 
@@ -69,79 +91,89 @@ The playbooks are compatible with the newly introduced **Execution environments 
 
 To build the EE image, jump in the _execution-environment_ folder and run the build:
 
-    ansible-builder build -f execution-environment/execution-environment.yml -t ocp-ee
+```bash
+ansible-builder build -f execution-environment/execution-environment.yml -t ocp-ee
+```
 
 ### Run playbooks
 
 To run the playbooks use ansible navigator:
 
-    ansible-navigator run main.yml -m stdout
+```bash
+ansible-navigator run main.yml -m stdout
+```
 
 Or, in case of Single Node Openshift:
 
-    ansible-navigator run main-sno.yml -m stdout
+```bash
+ansible-navigator run main-sno.yml -m stdout
+```
 
 ## Common vars
 
 The kind of network created is a simple NAT configuration, without DHCP since it will be provisioned with **bastion** VM. Defaults can be OK if you don't have any overlapping network.
 
-## HA Configuration vars
+### HA Configuration vars
 
 **vars/infra_vars.yml**
 
-    infra_nodes:
-      host_list:
-        bastion:
-          - ip: 192.168.100.4
-        loadbalancer:
-          - ip: 192.168.100.5
-    dhcp:
-      timezone: "Europe/Rome"
-      ntp: 204.11.201.10
+```yaml
+infra_nodes:
+  host_list:
+    bastion:
+      - ip: 192.168.100.4
+    loadbalancer:
+      - ip: 192.168.100.5
+dhcp:
+  timezone: "Europe/Rome"
+  ntp: 204.11.201.10
+```
 
 **vars/cluster_vars.yml**
 
-    three_node: false
-    network_cidr: 192.168.100.0/24
-    domain: hetzner.lab
-    additional_block_device:
-      enabled: false
-      size: 100
-    additional_nic:
-      enabled: false
-      network:
-    cluster:
-      version: stable
-      name: ocp4
-      ocp_user: admin
-      ocp_pass: openshift
-      pullSecret: ''
-    cluster_nodes:
-      host_list:
-        bootstrap:
-          - ip: 192.168.100.6
-        masters:
-          - ip: 192.168.100.7
-          - ip: 192.168.100.8
-          - ip: 192.168.100.9
-        workers:
-          - ip: 192.168.100.10
-            role: infra
-          - ip: 192.168.100.11
-          - ip: 192.168.100.12
-      specs:
-        bootstrap:
-          vcpu: 4
-          mem: 16
-          disk: 40
-        masters:
-          vcpu: 4
-          mem: 16
-          disk: 40
-        workers:
-          vcpu: 2
-          mem: 8
-          disk: 40
+```yaml
+three_node: false
+network_cidr: 192.168.100.0/24
+domain: hetzner.lab
+additional_block_device:
+  enabled: false
+  size: 100
+additional_nic:
+  enabled: false
+  network:
+cluster:
+  version: stable
+  name: ocp4
+  ocp_user: admin
+  ocp_pass: openshift
+  pullSecret: ""
+cluster_nodes:
+  host_list:
+    bootstrap:
+      - ip: 192.168.100.6
+    masters:
+      - ip: 192.168.100.7
+      - ip: 192.168.100.8
+      - ip: 192.168.100.9
+    workers:
+      - ip: 192.168.100.10
+        role: infra
+      - ip: 192.168.100.11
+      - ip: 192.168.100.12
+  specs:
+    bootstrap:
+      vcpu: 4
+      mem: 16
+      disk: 40
+    masters:
+      vcpu: 4
+      mem: 16
+      disk: 40
+    workers:
+      vcpu: 2
+      mem: 8
+      disk: 40
+```
 
 Where **domain** is the dns domain assigned to the nodes and **cluster.name** is the name chosen for our OCP cluster installation.
 
@@ -172,33 +204,35 @@ For testing purposes, minimum storage value is set at **60GB**.
 
 **The playbook now supports three nodes setup (3 masters with both master and worker node role) intended for pure testing purposes and you can enable it with the three_node boolean var ONLY FOR 4.6+**
 
-## Single Node Openshift vars
+### Single Node Openshift vars
 
 **vars/cluster_vars.yml**
 
-    domain: hetzner.lab
-    network_cidr: 192.168.100.0/24
-    cluster:
-      version: stable
-      name: ocp4
-      ocp_user: admin
-      ocp_pass: openshift
-      pullSecret: ''
-    cluster_nodes:
-      host_list:
-        sno:
-          ip: 192.168.100.7
-      specs:
-        sno:
-          vcpu: 8
-          mem: 32
-          disk: 120
-    local_storage:
-      enabled: true
-      volume_size: 50
-    additional_nic:
-      enabled: false
-      network:
+```yaml
+domain: hetzner.lab
+network_cidr: 192.168.100.0/24
+cluster:
+  version: stable
+  name: ocp4
+  ocp_user: admin
+  ocp_pass: openshift
+  pullSecret: ""
+cluster_nodes:
+  host_list:
+    sno:
+      ip: 192.168.100.7
+  specs:
+    sno:
+      vcpu: 8
+      mem: 32
+      disk: 120
+local_storage:
+  enabled: true
+  volume_size: 50
+additional_nic:
+  enabled: false
+  network:
+```
 
 **local_storage** field can be used to provision an additional disk to the VM in order to provision volumes using, for instance, rook-ceph or local storage operator.
 
@@ -207,6 +241,22 @@ For testing purposes, minimum storage value is set at **60GB**.
 In both cases, Pull Secret can be retrived easily at [https://cloud.redhat.com/openshift/install/pull-secret](https://cloud.redhat.com/openshift/install/pull-secret)
 
 **HTPasswd** provider is created after the installation, you can use **ocp_user** and **ocp_pass** to login!
+
+## Cleanup
+
+To clean all resources, you can simply run the cleanup playbooks.
+
+### Full deployment cleanup
+
+```bash
+ansible-playbook -i inventory 99_cleanup.yml
+```
+
+### SNO deployment cleanup
+
+```bash
+ansible-playbook -i inventory 99_cleanup_sno.yml
+```
 
 **DISCLAIMER**
 This project is for testing/lab only, it is not supported in any way by Red Hat nor endorsed.

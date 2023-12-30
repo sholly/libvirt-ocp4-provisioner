@@ -1,9 +1,7 @@
 - name: Create admin with cluster admin privileges
   hosts: bastion
-  vars_files:
-    vars/cluster_vars.yml
+  vars_files: vars/cluster_vars.yml
   tasks:
-
     - name: Ensuring httpd-tools is present
       ansible.builtin.dnf:
         name: httpd-tools
@@ -13,7 +11,7 @@
     - name: Ensure pip is up to date
       ansible.builtin.pip:
         name: pip
-        state: latest
+        state: latest # noqa package-latest
       become: true
 
     - name: Ensuring passlib is present
@@ -27,7 +25,7 @@
       ansible.builtin.template:
         src: templates/htpasswd_provider.j2
         dest: "{{ workspace_directory.base_path }}/{{ cluster.name }}/htpasswd_provider.yaml"
-        mode: 0755
+        mode: "0755"
 
     - name: Firing configuration script template for user creation
       ansible.builtin.template:
@@ -35,13 +33,16 @@
         dest: /tmp/ocp_user.sh
         mode: +x
 
-    - name: Creating htpasswd identity and user
+    - name: Creating htpasswd identity and user # noqa command-instead-of-shell no-changed-when
       ansible.builtin.shell: /tmp/ocp_user.sh
 
     - name: Sleeping 180 seconds...
       ansible.builtin.pause:
         seconds: 240
 
-    - name: Try to login with admin
-      ansible.builtin.command: /usr/bin/oc login -u {{ cluster.ocp_user }} -p {{ cluster.ocp_pass }} https://api.{{ hostvars['bastion'].ocp_domain }}:6443
+    - name: Try to login with admin # noqa command-instead-of-shell no-changed-when
+      ansible.builtin.shell: /usr/bin/oc login --insecure-skip-tls-verify -u {{ cluster.ocp_user }} -p {{ cluster.ocp_pass }} https://api.{{ hostvars['bastion'].ocp_domain }}:6443 # noqa yaml[line-length]
       retries: 10
+
+    - name: Remove kubeadmin user # noqa command-instead-of-shell no-changed-when
+      ansible.builtin.shell: /usr/bin/oc delete secrets kubeadmin -n kube-system
