@@ -9,7 +9,7 @@ packages:
     - firewalld
 
   centos:
-    - python36
+    - python39
     - syslinux
     - dnsmasq
     - nginx
@@ -18,3 +18,4 @@ packages:
     - tar
     - bind-utils
     - firewalld
+    - python3-pip

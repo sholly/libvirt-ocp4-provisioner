@@ -29,10 +29,9 @@ provider "libvirt" {
 resource "libvirt_volume" "os_image" {
   name = "${var.hostname}-os_image"
   pool = var.libvirt_pool
-  source = "https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20230501.0.x86_64.qcow2"
+  source = "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
   format = "qcow2"
 }
-
 # Use CloudInit ISO to add ssh-key to the instance
 resource "libvirt_cloudinit_disk" "commoninit" {
   name = "${var.hostname}-commoninit.iso"
@@ -73,6 +72,11 @@ resource "libvirt_domain" "bastion" {
   name = var.hostname
   memory = var.memory*1024
   vcpu = var.cpu
+  machine = "q35"
+
+  cpu {
+    mode = "host-passthrough"
+  }
 
   disk {
      volume_id = libvirt_volume.os_image.id
@@ -98,6 +102,10 @@ resource "libvirt_domain" "bastion" {
     listen_type = "address"
     autoport = "true"
   }
+
+  xml {
+    xslt = file("${path.module}/uefi-patch.xsl")
+  }  
 }
 
 terraform {
