@@ -4,10 +4,10 @@ network_cidr: 192.168.1.0/24
 libvirt_pool_path: /raid/kvm
 cluster:
   name: ocp4
-  version: 4.12.22
+  version: 4.13.11
   ocp_user: admin
   ocp_pass: openshift
-  pullSecret: ""
+  pullSecret: ''
   additional_nic:
     enabled: false
     network:
@@ -24,7 +24,6 @@ cluster_nodes:
       - ip: 192.168.1.9
     workers:
       - ip: 192.168.1.10
-        role: infra
       - ip: 192.168.1.11
       - ip: 192.168.1.12
   specs:
