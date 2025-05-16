@@ -4,7 +4,7 @@ do
 	virsh destroy $f
 	virsh undefine --remove-all-storage $f
 done
-virsh net-destroy ocp4
-virsh net-undefine ocp4
-virsh pool-destroy ocp4
-virsh pool-undefine ocp4
+virsh net-destroy ocdev
+virsh net-undefine ocdev
+virsh pool-destroy ocdev
+virsh pool-undefine ocdev

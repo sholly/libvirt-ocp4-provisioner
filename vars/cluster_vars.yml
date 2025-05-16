@@ -1,10 +1,10 @@
-three_node: false
+three_node: true
 domain: lab.unixnerd.org
-network_cidr: 192.168.1.0/24
+network_cidr: 192.168.2.0/24
 libvirt_pool_path: /raid/kvm
 cluster:
-  name: ocp4
-  version: 4.17.15
+  name: ocdev
+  version: stable
   ocp_user: admin
   ocp_pass: openshift
   pullSecret: ''
@@ -12,28 +12,29 @@ cluster:
     enabled: false
     network:
   additional_block_device:
-    enabled: false
+    enabled: true
     size: 300
 cluster_nodes:
   host_list:
     bootstrap:
-      - ip: 192.168.1.6
+      - ip: 192.168.2.6
     masters:
-      - ip: 192.168.1.7
-      - ip: 192.168.1.8
-      - ip: 192.168.1.9
+      - ip: 192.168.2.7
+        hostname: master-0-ocdev
+      - ip: 192.168.2.8
+        hostname: master-1-ocdev
+      - ip: 192.168.2.9
+        hostname: master-2-ocdev
     workers:
-      - ip: 192.168.1.10
-      - ip: 192.168.1.11
-      - ip: 192.168.1.12
+      - ip: 192.168.2.10
   specs:
     bootstrap:
       vcpu: 4
       mem: 16
       disk: 120
     masters:
-      vcpu: 4
-      mem: 16
+      vcpu: 8
+      mem: 32
       disk: 120
     workers:
       vcpu: 8

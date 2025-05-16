@@ -94,6 +94,7 @@
         project_path: "{{ workspace_directory.base_path }}/{{ cluster.name }}/terraform/libvirt-resources"
         variables:
           dns: "{{ infra_nodes.host_list.bastion[0].ip }}"
+          loadbalancerip: "{{ infra_nodes.host_list.loadbalancer[0].ip }}"
           domain: "{{ cluster.name }}.{{ domain }}"
           network_cidr: ' ["{{ network_cidr }}"]'
           cluster_name: "{{ cluster.name }}"

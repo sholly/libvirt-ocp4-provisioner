@@ -7,6 +7,7 @@ variable "network_cidr" {
 }
 variable "cluster_name" { default = "ocp4" }
 variable "libvirt_pool_path" { default = "/var/lib/libvirt/images" }
+variable "loadbalancerip" { default = "192.168.100.5" }
 
 # instance the provider
 provider "libvirt" {
@@ -36,6 +37,18 @@ resource "libvirt_network" "ocp_network" {
   dns {
     enabled = true
     local_only = true
+    hosts {
+        hostname = "api.${var.domain}"
+        ip = "${var.loadbalancerip}"
+    }
+    hosts {
+        hostname = "api-int.${var.domain}"
+        ip = "${var.loadbalancerip}"
+    }
+    hosts {
+        hostname = "apps.${var.domain}"
+        ip = "${var.loadbalancerip}"
+      }
   }
 
   dnsmasq_options {

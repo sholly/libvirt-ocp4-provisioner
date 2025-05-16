@@ -1,9 +1,9 @@
 infra_nodes:
   host_list:
     bastion:
-      - ip: 192.168.1.4
+      - ip: 192.168.2.4
     loadbalancer:
-      - ip: 192.168.1.5
+      - ip: 192.168.2.5
 
 dhcp:
   timezone: "America/Denver"
