@@ -14,38 +14,38 @@
       block:
         - name: Shutdown bootstrap node
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: destroyed
           loop: "{{ groups['bootstrap'] }}"
 
         - name: Shutdown master nodes
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: destroyed
           loop: "{{ groups['masters'] }}"
 
         - name: Shutdown worker nodes
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: destroyed
           loop: "{{ groups['workers'] }}"
           when: not three_node
 
         - name: Restart bootstrap node
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: running
           loop: "{{ groups['bootstrap'] }}"
 
         - name: Restart master nodes
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: running
           loop: "{{ groups['masters'] }}"
 
         - name: Restart worker nodes
           community.libvirt.virt:
-            name: "{{ hostvars[item].node_hostname }}"
+            name: "{{ hostvars[item].vmname }}"
             state: running
           loop: "{{ groups['workers'] }}"
           when: not three_node

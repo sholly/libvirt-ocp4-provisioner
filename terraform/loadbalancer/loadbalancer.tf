@@ -68,7 +68,7 @@ data "template_file" "meta_data" {
 
 # Create the machine
 resource "libvirt_domain" "infra-machine" {
-  name = var.hostname
+  name = var.vmname
   memory = var.memory
   vcpu = var.cpu
   machine = "q35"

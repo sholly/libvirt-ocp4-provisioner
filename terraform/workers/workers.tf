@@ -35,7 +35,7 @@ resource "libvirt_volume" "storage_image" {
 # Create the machine
 resource "libvirt_domain" "worker" {
   count = var.vm_count
-  name = "${var.hostname}-${count.index}"
+  name = "${var.vmname}-${count.index}"
   memory = var.memory*1024
   vcpu = var.cpu
 

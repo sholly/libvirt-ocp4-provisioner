@@ -69,7 +69,7 @@ data "template_file" "meta_data" {
 # Create the machine
 resource "libvirt_domain" "bastion" {
   # domain name in libvirt, not hostname
-  name = var.hostname
+  name = var.vmname
   memory = var.memory*1024
   vcpu = var.cpu
   machine = "q35"

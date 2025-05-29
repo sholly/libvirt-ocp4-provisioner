@@ -10,6 +10,7 @@
         project_path: "{{ workspace_directory.base_path }}/{{ cluster.name }}/terraform/bootstrap"
         variables:
           hostname: "bootstrap"
+          vmname: "{{ cluster.name }}-bootstrap"
           libvirt_network: "{{ cluster.name }}"
           libvirt_pool: "{{ cluster.name }}"
           cpu: "{{ cluster_nodes.specs.bootstrap.vcpu }}"
@@ -25,6 +26,7 @@
         force_init: true
         variables:
           hostname: "master"
+          vmname: "{{ cluster.name }}-master"
           libvirt_network: "{{ cluster.name }}"
           libvirt_pool: "{{ cluster.name }}"
           cpu: "{{ cluster_nodes.specs.masters.vcpu }}"
@@ -45,6 +47,7 @@
         force_init: true
         variables:
           hostname: "worker"
+          vmname: "{{ cluster.name }}-master"
           libvirt_network: "{{ cluster.name }}"
           libvirt_pool: "{{ cluster.name }}"
           cpu: "{{ cluster_nodes.specs.workers.vcpu }}"
@@ -64,6 +67,7 @@
       ansible.builtin.add_host:
         hostname: "bootstrap"
         node_hostname: "bootstrap"
+        vmname: "{{ cluster.name }}-bootstrap"
         node_mac: "{{ output_bootstrap.outputs.macs.value[0] | lower }}"
         node_ip: "{{ item.ip }}"
         node_reversedns: "{{ item.ip | ansible.utils.ipaddr('revdns') }}" # noqa jinja[invalid]
@@ -77,6 +81,7 @@
       ansible.builtin.add_host:
         hostname: "master-{{ master_idx }}"
         node_hostname: "master-{{ master_idx }}"
+        vmname: "{{ cluster.name }}-master-{{ master_idx }}"
         etcd_fqdn: "etcd-{{ master_idx }}.{{ ocp_domain }}"
         etcd_ip: "{{ item.ip }}"
         node_mac: "{{ output_masters.outputs.macs.value[master_idx] | lower }}" # noqa jinja[invalid]
@@ -95,6 +100,7 @@
       ansible.builtin.add_host:
         hostname: "master-{{ master_idx }}"
         node_hostname: "master-{{ master_idx }}"
+        vmname: "{{ cluster.name }}-master-{{ master_idx }}"
         etcd_fqdn: "etcd-{{ master_idx }}.{{ ocp_domain }}"
         etcd_ip: "{{ item.ip }}"
         node_mac: "{{ output_masters.outputs.macs.value[master_idx] | lower }}" # noqa jinja[invalid]
@@ -114,6 +120,7 @@
       ansible.builtin.add_host:
         hostname: "worker-{{ worker_idx }}"
         node_hostname: "worker-{{ worker_idx }}"
+        vmname: "{{ cluster.name }}-worker-{{ worker_idx }}"
         node_mac: "{{ output_workers.outputs.macs.value[worker_idx] | lower }}" # noqa jinja[invalid]
         node_ip: "{{ item.ip }}"
         node_reversedns: "{{ item.ip | ansible.utils.ipaddr('revdns') }}"

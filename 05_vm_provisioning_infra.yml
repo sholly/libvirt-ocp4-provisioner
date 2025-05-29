@@ -25,6 +25,7 @@
           libvirt_pool: "{{ cluster.name }}"
           network_data: '{ hostIP = "{{ infra_nodes.host_list.bastion[0].ip }}", broadcast= "{{ infra_nodes.host_list.bastion[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''broadcast'') }}", dns = "{{ infra_nodes.host_list.bastion[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') | ansible.utils.ipmath(1) }}", gateway = "{{ infra_nodes.host_list.bastion[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') | ansible.utils.ipmath(1) }}", network = "{{ infra_nodes.host_list.bastion[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') }}" }' # noqa yaml[line-length]
           hostname: "bastion"
+          vmname: "{{ cluster.name }}-bastion"
           domain: "{{ domain }}"
           cluster_name: "{{ cluster.name }}"
           sshkey: "{{ ssh_service_key_pub }}"
@@ -41,6 +42,7 @@
           libvirt_pool: "{{ cluster.name }}"
           network_data: '{ hostIP = "{{ infra_nodes.host_list.loadbalancer[0].ip }}", broadcast= "{{ infra_nodes.host_list.loadbalancer[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''broadcast'') }}", dns = "{{ infra_nodes.host_list.loadbalancer[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') | ansible.utils.ipmath(1) }}", gateway = "{{ infra_nodes.host_list.loadbalancer[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') | ansible.utils.ipmath(1) }}", network = "{{ infra_nodes.host_list.loadbalancer[0].ip | ansible.utils.ipsubnet(24) | ansible.utils.ipaddr(''network'') }}" }' # noqa yaml[line-length]
           hostname: "loadbalancer"
+          vmname: "{{ cluster.name }}-loadbalancer"
           domain: "{{ domain }}"
           cluster_name: "{{ cluster.name }}"
           sshkey: "{{ ssh_service_key_pub }}"
@@ -51,6 +53,7 @@
     - name: Add bastion and loadbalancer to in-memory inventory
       ansible.builtin.add_host:
         hostname: "{{ item.key }}"
+        vmname: "{{ cluster.name }}-{{ item.key }}"
         ansible_host: "{{ item.value[0].ip }}"
         ansible_ssh_private_key_file: "{{ playbook_dir }}/id_rsa_ocp_setup"
         ansible_user: ocpinstall
