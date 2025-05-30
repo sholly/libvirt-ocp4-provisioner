@@ -1,5 +1,6 @@
 # variables that can be overriden
 variable "hostname" { default = "master" }
+variable "vmname" { default = "master" }
 variable "memory" { default = 16 }
 variable "cpu" { default = 4 }
 variable "vm_count" { default = 3 }
@@ -17,7 +18,7 @@ provider "libvirt" {
 
 resource "libvirt_volume" "os_image" {
   count = var.vm_count
-  name = "${var.hostname}-os_image-${count.index}"
+  name = "${var.vmname}-os_image-${count.index}"
   size = var.vm_volume_size*1073741824
   pool = var.libvirt_pool
   format = "qcow2"
@@ -25,7 +26,7 @@ resource "libvirt_volume" "os_image" {
 
 resource "libvirt_volume" "storage_image" {
   count = tobool(lower(var.vm_block_device)) ? var.vm_count : 0
-  name = "${var.hostname}-storage_image-${count.index}"
+  name = "${var.vmname}-storage_image-${count.index}"
   pool = var.libvirt_pool
   size = var.vm_block_device_size*1073741824
   format = "qcow2"

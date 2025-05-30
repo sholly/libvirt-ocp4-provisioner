@@ -47,7 +47,7 @@
         force_init: true
         variables:
           hostname: "worker"
-          vmname: "{{ cluster.name }}-master"
+          vmname: "{{ cluster.name }}-worker"
           libvirt_network: "{{ cluster.name }}"
           libvirt_pool: "{{ cluster.name }}"
           cpu: "{{ cluster_nodes.specs.workers.vcpu }}"

@@ -1,5 +1,6 @@
 # variables that can be overriden
 variable "hostname" { default = "bastion" }
+variable "vmname" { default = "bastion" }
 variable "domain" { default = "hetzner.lab" }
 variable "cluster_name" { default = "ocp4" }
 variable "memory" { default = 6 }
@@ -27,14 +28,14 @@ provider "libvirt" {
 
 # fetch the latest ubuntu release image from their mirrors
 resource "libvirt_volume" "os_image" {
-  name = "${var.hostname}-os_image"
+  name = "${var.vmname}-os_image"
   pool = var.libvirt_pool
   source = "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
   format = "qcow2"
 }
 # Use CloudInit ISO to add ssh-key to the instance
 resource "libvirt_cloudinit_disk" "commoninit" {
-  name = "${var.hostname}-commoninit.iso"
+  name = "${var.vmname}-commoninit.iso"
   pool = var.libvirt_pool
   user_data = data.template_file.user_data.rendered
   meta_data = data.template_file.meta_data.rendered

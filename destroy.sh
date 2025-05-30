@@ -1,10 +1,11 @@
-for f in bastion loadbalancer bootstrap master-0 master-1 master-2 worker-0 worker-1 worker-2
+for f in bastion loadbalancer bootstrap master-0 master-1 master-2 worker-0 worker-1 
 do
-	echo $f
-	virsh destroy $f
-	virsh undefine --remove-all-storage $f
+	v=multidev-$f
+	echo $v
+	virsh destroy $v
+	virsh undefine --remove-all-storage $v
 done
-virsh net-destroy ocp4
-virsh net-undefine ocp4
-virsh pool-destroy ocp4
-virsh pool-undefine ocp4
+virsh net-destroy multidev
+virsh net-undefine multidev
+virsh pool-destroy multidev
+virsh pool-undefine multidev

@@ -1,5 +1,6 @@
 # variables that can be overriden
 variable "hostname" { default = "bootstrap" }
+variable "vmname" { default = "bootstrap" }
 variable "memory" { default = 16 }
 variable "cpu" { default = 4 }
 variable "vm_volume_size" { default = 40 }
@@ -13,7 +14,7 @@ provider "libvirt" {
 
 # fetch the latest ubuntu release image from their mirrors
 resource "libvirt_volume" "os_image" {
-  name = "${var.hostname}-os_image"
+  name = "${var.vmname}-os_image"
   size = var.vm_volume_size*1073741824
   pool = var.libvirt_pool
   format = "qcow2"
